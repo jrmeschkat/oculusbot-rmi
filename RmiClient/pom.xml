@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>oculusbot</groupId>
-	<artifactId>OculusbotClient</artifactId>
+	<artifactId>RmiClient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<plugins>
@@ -59,27 +59,12 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
 	<dependencies>
-	<!-- 
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl</artifactId>
-			<version>${lwjgl.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-platform</artifactId>
-			<version>${lwjgl.version}</version>
-			<classifier>natives-windows</classifier>
-		</dependency>
-	 -->
-
 		<dependency>
 			<groupId>oculusbot</groupId>
-			<artifactId>OculusbotShared</artifactId>
+			<artifactId>RmiShared</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-
 </project>

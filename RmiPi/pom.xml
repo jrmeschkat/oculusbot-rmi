@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>oculusbot</groupId>
-	<artifactId>OculusbotServerPi</artifactId>
+	<artifactId>RmiPi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<build>
 		<plugins>
@@ -78,13 +78,6 @@
 		</plugins>
 	</build>
 	
-	<dependencies>
-		<dependency>
-			<groupId>oculusbot</groupId>
-			<artifactId>OculusbotShared</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 	
 	<properties>
 		<mainClass>oculusbot.pi.OculusbotServerPiMain</mainClass>
@@ -92,4 +85,11 @@
 		<filename>OculusbotServer</filename>
 		<ip>oculusbot</ip>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>oculusbot</groupId>
+			<artifactId>RmiShared</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
 </project>
