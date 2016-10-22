@@ -11,4 +11,6 @@ public interface ServerProperties {
 	String PI_PASSWORD = "pi.password";
 	String CAM_WIDTH = "cam.width";
 	String CAM_HEIGHT = "cam.height";
+	String CAM_ID_LEFT = "cam.id.left";
+	String CAM_ID_RIGHT = "cam.id.right";
 }

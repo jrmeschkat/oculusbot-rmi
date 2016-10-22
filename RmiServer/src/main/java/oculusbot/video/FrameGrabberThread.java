@@ -23,22 +23,26 @@ public class FrameGrabberThread extends StatusThread {
 	private boolean switchCams = false;
 	private int camWidth;
 	private int camHeight;
-	
-	public FrameGrabberThread(){
-		this(0, 0);
+	private int camIdLeft;
+	private int camIdRight;
+
+	public FrameGrabberThread() {
+		this(0, 0, 0, 1);
 	}
-	
-	public FrameGrabberThread(int camWidth, int camHeight) {
+
+	public FrameGrabberThread(int camWidth, int camHeight, int camIdLeft, int camIdRight) {
 		this.camWidth = camWidth;
 		this.camHeight = camHeight;
+		this.camIdLeft = camIdLeft;
+		this.camIdRight = camIdRight;
 	}
 
 	@Override
 	public Status getStatus() {
 		return passthroughStatus(leftThread, rightThread);
 	}
-	
-	public void switchCameras(){
+
+	public void switchCameras() {
 		switchCams = !switchCams;
 	}
 
@@ -54,15 +58,15 @@ public class FrameGrabberThread extends StatusThread {
 	@Override
 	protected void setup() {
 		this.buffer = new MatOfByte();
-		if(camWidth > 0 && camHeight > 0){
-			leftThread = new VideoCaptureThread(0, camWidth, camHeight);
-			rightThread = new VideoCaptureThread(1, camWidth, camHeight);
-		}else {
-			leftThread = new VideoCaptureThread(0);
-			rightThread = new VideoCaptureThread(1);
+		if (camWidth > 0 && camHeight > 0) {
+			leftThread = new VideoCaptureThread(camIdLeft, camWidth, camHeight);
+			rightThread = new VideoCaptureThread(camIdRight, camWidth, camHeight);
+		} else {
+			leftThread = new VideoCaptureThread(camIdLeft);
+			rightThread = new VideoCaptureThread(camIdRight);
 		}
 		leftThread.start();
-		rightThread.start();		
+		rightThread.start();
 	}
 
 	@Override
@@ -70,10 +74,10 @@ public class FrameGrabberThread extends StatusThread {
 		Mat m = new Mat();
 		Mat left = new Mat();
 		Mat right = new Mat();
-		if(switchCams){
+		if (switchCams) {
 			left = leftThread.getFrame();
 			right = rightThread.getFrame();
-		} else{
+		} else {
 			right = leftThread.getFrame();
 			left = rightThread.getFrame();
 		}
@@ -85,7 +89,7 @@ public class FrameGrabberThread extends StatusThread {
 		MatOfByte buf = new MatOfByte();
 		MatOfInt params = new MatOfInt(Imgcodecs.CV_IMWRITE_JPEG_QUALITY, QUALITY);
 		Imgcodecs.imencode(".jpg", m, buf, params);
-		buffer = buf;		
+		buffer = buf;
 	}
 
 	@Override

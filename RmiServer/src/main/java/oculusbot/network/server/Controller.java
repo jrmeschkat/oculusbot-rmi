@@ -40,8 +40,10 @@ public class Controller extends StatusThread {
 		com = new CommunicationsThread(props.getPropertyAsInt(PORT_DISCOVERY), this);
 		int camWidth = props.getPropertyAsInt(CAM_WIDTH);
 		int camHeight = props.getPropertyAsInt(CAM_HEIGHT);
+		int camIdLeft = props.getPropertyAsInt(CAM_ID_LEFT);
+		int camIdRight = props.getPropertyAsInt(CAM_ID_RIGHT);
 		msg("Cam resolution: " + camWidth + " x " + camHeight);
-		video = new SendVideoThread(props.getPropertyAsInt(PORT_VIDEO), camWidth, camHeight);
+		video = new SendVideoThread(props.getPropertyAsInt(PORT_VIDEO), camWidth, camHeight, camIdLeft, camIdRight);
 		com.start();
 		video.start();
 

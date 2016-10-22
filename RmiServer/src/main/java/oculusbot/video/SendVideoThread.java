@@ -11,6 +11,8 @@ public class SendVideoThread extends NetworkThread {
 	private LinkedList<String> clients;
 	private int camWidth = 0;
 	private int camHeight = 0;
+	private int camIdLeft = 0;
+	private int camIdRight = 1;
 
 	public SendVideoThread(int port) {
 		super(port, false);
@@ -23,6 +25,12 @@ public class SendVideoThread extends NetworkThread {
 		this.camHeight = camHeight;
 	}
 
+	public SendVideoThread(int port, int camWidth, int camHeight, int camIdLeft, int camIdRight) {
+		this(port, camWidth, camHeight);
+		this.camIdLeft = camIdLeft;
+		this.camIdRight = camIdRight;
+	}
+
 	@Override
 	public Status getStatus() {
 		return passthroughStatus(frameGrabber);
@@ -32,7 +40,7 @@ public class SendVideoThread extends NetworkThread {
 	protected void setup() {
 		super.setup();
 		if(camHeight > 0 && camWidth > 0){
-			frameGrabber = new FrameGrabberThread(camWidth, camHeight);
+			frameGrabber = new FrameGrabberThread(camWidth, camHeight, camIdLeft, camIdRight);
 		} else {
 			frameGrabber = new FrameGrabberThread();
 		}
