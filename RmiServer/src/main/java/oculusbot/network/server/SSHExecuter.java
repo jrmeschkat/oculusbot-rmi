@@ -1,8 +1,5 @@
 package oculusbot.network.server;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;

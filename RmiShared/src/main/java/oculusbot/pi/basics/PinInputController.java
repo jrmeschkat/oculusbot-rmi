@@ -10,7 +10,6 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 public class PinInputController {
 	private GpioPinDigitalInput input;
 	private boolean high;
-	private boolean lastStatus;
 
 	public boolean isHigh() {
 		return high;

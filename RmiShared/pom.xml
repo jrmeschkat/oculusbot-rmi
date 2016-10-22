@@ -14,10 +14,33 @@
 						<id>install-opencv</id>
 						<phase>clean</phase>
 						<configuration>
-							<file>${opencv.jar}</file>
+							<file>${opencv.dir}/${opencv.jar}.jar</file>
 							<repositoryLayout>default</repositoryLayout>
 							<groupId>opencv</groupId>
 							<artifactId>opencv</artifactId>
+							<version>3.1.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<id>install-opencv-natives</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${opencv.dir}/natives/${opencv.jar}-natives.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>opencv</groupId>
+							<artifactId>opencv-natives</artifactId>
 							<version>3.1.0</version>
 							<packaging>jar</packaging>
 							<generatePom>true</generatePom>
@@ -33,8 +56,8 @@
 
 	<properties>
 		<lwjgl.version>3.0.1-SNAPSHOT</lwjgl.version>
-		<opencv.jar>D:/libs/opencv/opencv-310.jar</opencv.jar>
-		<lwjgl.jar>D:/libs/lwjgl-${version}/lwjgl-${version}.jar</lwjgl.jar>
+		<opencv.jar>opencv-310</opencv.jar>
+		<opencv.dir>D:/libs/opencv</opencv.dir>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -90,7 +113,7 @@
 		<dependency>
 			<groupId>com.pi4j</groupId>
 			<artifactId>pi4j-core</artifactId>
-			<version>1.1-SNAPSHOT</version>
+			<version>1.1</version>
 		</dependency>
 
 	</dependencies>

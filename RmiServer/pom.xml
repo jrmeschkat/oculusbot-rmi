@@ -7,15 +7,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
@@ -41,6 +32,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>opencv</groupId>
+							<artifactId>opencv-natives</artifactId>
+							<version>3.1.0</version>
+							<overWrite>true</overWrite>
+							<outputDirectory>${project.build.directory}/natives</outputDirectory>
+							<includes>**/*.dll</includes>
+						</artifactItem>
+					</artifactItems>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -58,8 +66,10 @@
 	</dependencies>
 
 	<properties>
-		<mainClass>oculusbot.network.server.OculusbotServerMain</mainClass>
-		<filename>OculusbotServer</filename>
+		<mainClass>oculusbot.network.server.RMIServerMain</mainClass>
+		<filename>RMIServer</filename>
 		<ip>oculusbot</ip>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 </project>

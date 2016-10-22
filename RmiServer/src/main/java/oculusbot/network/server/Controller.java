@@ -2,22 +2,14 @@ package oculusbot.network.server;
 
 import org.lwjgl.glfw.GLFW;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-
-import oculusbot.basic.PropertyLoader;
-import static oculusbot.basic.ServerProperties.*;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Scanner;
 
+import static oculusbot.basic.ServerProperties.*;
+import oculusbot.basic.PropertyLoader;
 import oculusbot.basic.StatusThread;
-//import oculusbot.bot.BotControlThread;
-//import oculusbot.bot.StatusLED;
-import oculusbot.pi.basics.Pins;
 import oculusbot.rmi.PiOperations;
 import oculusbot.video.SendVideoThread;
 
@@ -36,7 +28,7 @@ public class Controller extends StatusThread {
 		props = new PropertyLoader(PROPERTY_FILENAME, DEFAULT_PROPERTY_FILENAME);
 		hostname = props.getProperty(PI_HOSTNAME);
 		exec = new SSHExecuter(props.getProperty(PI_USER), props.getProperty(PI_PASSWORD), hostname);
-		msg(exec.sendCommand("sudo OculusbotServerRMI/run.sh"));
+		msg(exec.sendCommand("sudo RMIPiServer/run.sh"));
 
 		ops = bind(hostname, PiOperations.REGISTRY_NAME);
 		try {

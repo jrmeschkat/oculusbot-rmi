@@ -2,17 +2,19 @@ package oculusbot.bot;
 
 import static oculusbot.pi.basics.Pins.*;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.SocketTimeoutException;
-
 import com.pi4j.io.gpio.GpioController;
 
 import oculusbot.basic.Status;
 import oculusbot.basic.StatusThread;
-import oculusbot.network.NetworkThread;
 import oculusbot.pi.motors.MotorThread;
 
+/**
+ * This thread controls the three motors for the three respective axes of the
+ * bot.
+ * 
+ * @author Robert Meschkat
+ *
+ */
 public class BotControlThread extends StatusThread {
 	private MotorThread yaw;
 	private MotorThread pitch;
@@ -47,6 +49,12 @@ public class BotControlThread extends StatusThread {
 		this.gpio = gpio;
 	}
 
+	/**
+	 * Set the target angle for all axes.
+	 * @param yaw
+	 * @param pitch
+	 * @param roll
+	 */
 	public void set(double yaw, double pitch, double roll) {
 		setYaw(yaw);
 		setPitch(pitch);
@@ -55,9 +63,10 @@ public class BotControlThread extends StatusThread {
 
 	@Override
 	protected void setup() {
-		yaw = new MotorThread(GPIO_24, GPIO_25, GPIO_08, GPIO_07, GPIO_06, gpio, 30, false);
-		pitch = new MotorThread(GPIO_14, GPIO_15, GPIO_18, GPIO_23, GPIO_05, gpio, 40, false);
-		roll = new MotorThread(GPIO_12, GPIO_16, GPIO_20, GPIO_21, GPIO_13, gpio, 30, true);
+		//create a thread for each axis
+		yaw = new MotorThread(GPIO_24, GPIO_25, GPIO_08, GPIO_07, GPIO_06, gpio, 45, false);
+		pitch = new MotorThread(GPIO_12, GPIO_16, GPIO_20, GPIO_21, GPIO_05, gpio, 40, false);
+		roll = new MotorThread(GPIO_14, GPIO_15, GPIO_18, GPIO_23, GPIO_13, gpio, 30, true);
 		yaw.start();
 		pitch.start();
 		roll.start();

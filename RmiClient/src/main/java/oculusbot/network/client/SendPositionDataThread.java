@@ -1,15 +1,11 @@
 package oculusbot.network.client;
 
-import java.io.IOException;
-
+import static org.lwjgl.ovr.OVR.*;
 import org.lwjgl.ovr.OVRPosef;
 import org.lwjgl.ovr.OVRQuatf;
 import org.lwjgl.ovr.OVRTrackingState;
 
-import static org.lwjgl.ovr.OVR.*;
-
 import oculusbot.basic.StatusThread;
-import oculusbot.network.NetworkThread;
 import oculusbot.rift.RenderThread;
 import oculusbot.rift.Rift;
 

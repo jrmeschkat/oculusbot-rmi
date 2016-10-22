@@ -23,7 +23,6 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;

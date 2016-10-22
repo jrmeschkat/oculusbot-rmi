@@ -14,7 +14,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
@@ -51,13 +51,8 @@
 						<id>default-cli</id>
 						<configuration>
 							<target>
-								<scp file="target/${filename}.jar"
-									toDir="pi@${ip}:${folder}/${filename}.jar"
+								<scp file="target/${filename}.jar" toDir="pi@${ip}:${folder}/${filename}.jar"
 									trust="yes" password="raspberry" />
-									<!-- 
-								<scp file="server.cfg" toDir="pi@${ip}:${folder}/server.cfg"
-									trust="yes" password="raspberry" />
-									 -->
 							</target>
 						</configuration>
 					</execution>
@@ -77,14 +72,14 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	
+
 	<properties>
-		<mainClass>oculusbot.pi.OculusbotServerPiMain</mainClass>
-		<folder>/home/pi/OculusbotServerRMI</folder>
-		<filename>OculusbotServer</filename>
+		<mainClass>oculusbot.pi.RMIPiServerMain</mainClass>
+		<folder>/home/pi/RMIPiServer</folder>
+		<filename>RMIPiServer</filename>
 		<ip>oculusbot</ip>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>oculusbot</groupId>

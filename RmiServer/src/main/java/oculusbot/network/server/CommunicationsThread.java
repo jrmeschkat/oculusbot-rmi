@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Arrays;
 
 import static oculusbot.network.NetworkConstants.*;
 import oculusbot.network.NetworkThread;

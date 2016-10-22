@@ -26,22 +26,19 @@ import org.lwjgl.ovr.OVRLogCallbackI;
 import org.lwjgl.ovr.OVRMatrix4f;
 import org.lwjgl.ovr.OVRMirrorTextureDesc;
 import org.lwjgl.ovr.OVRPosef;
-import org.lwjgl.ovr.OVRQuatf;
 import org.lwjgl.ovr.OVRRecti;
 import org.lwjgl.ovr.OVRSessionStatus;
 import org.lwjgl.ovr.OVRSizei;
 import org.lwjgl.ovr.OVRTextureSwapChainDesc;
 import org.lwjgl.ovr.OVRTrackingState;
-import org.lwjgl.ovr.OVRUtil;
 import org.lwjgl.ovr.OVRVector3f;
+import org.lwjgl.PointerBuffer;
 
 import oculusbot.opengl.FrameBufferObject;
 import oculusbot.opengl.Renderable;
 import oculusbot.opengl.renderable.MatCanvas;
 import oculusbot.video.ReceiveVideoThread;
 
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.opengl.GL;
 
 public class Rift {
 	private long session;
