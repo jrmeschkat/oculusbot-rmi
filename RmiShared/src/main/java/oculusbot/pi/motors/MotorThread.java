@@ -8,8 +8,25 @@ import com.pi4j.io.gpio.PinState;
 import oculusbot.basic.StatusThread;
 import oculusbot.pi.basics.PinInputController;
 
+/**
+ * Thread used to control stepper motors
+ * <a href="https://arduino-info.wikispaces.com/SmallSteppers">28BYJ-48</a>.
+ *
+ * An <a href="http://www.ti.com/lit/ds/symlink/uln2003a.pdf">ULN2003</a> is
+ * used as a stepper motor driver.
+ * 
+ * @author Robert Meschkat
+ *
+ */
 public class MotorThread extends StatusThread {
+	/**
+	 * Delay between steps during movement. A greater value would lead to a
+	 * slower movement.
+	 */
 	private static final long DEFAULT_DELAY = 4;
+	/**
+	 * Defines size of the angle which will be covered by one step.
+	 */
 	private static final double STEP_ANGLE_RATIO = 360.0 / 2048.0; // = 360 degrees / 2048 steps = 0,17578125
 
 	private double minAngle = -180;
@@ -29,25 +46,51 @@ public class MotorThread extends StatusThread {
 	private boolean[][] fullstep = { { true, true, false, false }, { false, true, true, false },
 			{ false, false, true, true }, { true, false, false, true } };
 
+	/**
+	 * Set the delay between steps. A longer delay would mean a slower movement
+	 * of the motor. Minimum is {@value #DEFAULT_DELAY}.
+	 * 
+	 * @param delay
+	 */
 	public void setDelay(long delay) {
-		if (delay < 2) {
+		if (delay < 4) {
 			delay = DEFAULT_DELAY;
 		}
 		this.delay = delay;
 	}
 
-	public void setDelay() {
+	/**
+	 * Resets the delay to {@value #DEFAULT_DELAY}.
+	 */
+	public void resetDelay() {
 		this.delay = DEFAULT_DELAY;
 	}
 
+	/**
+	 * Returns current positon.
+	 * 
+	 * @return
+	 */
 	public double getCurrentAngle() {
 		return currentAngle;
 	}
 
+	/**
+	 * Returns the center Angle.
+	 * 
+	 * @return
+	 */
 	public double getCenterAngle() {
 		return centerAngle;
 	}
 
+	/**
+	 * Sets the angle to which the motor should move. If the value exceeds the
+	 * minimum or the maximum of the motor then the target will be set to the
+	 * respective border.
+	 * 
+	 * @param angle
+	 */
 	public void setTargetAngle(double angle) {
 		if (angle > maxAngle) {
 			angle = maxAngle;
@@ -60,6 +103,27 @@ public class MotorThread extends StatusThread {
 		this.targetAngle = angle;
 	}
 
+	/**
+	 * Creates an object to control a stepper motor with the RaspberryPi.
+	 * 
+	 * @param blue
+	 *            Output pin for blue motor control line.
+	 * @param pink
+	 *            Output pin for pink motor control line.
+	 * @param yellow
+	 *            Output pin for yellow motor control line.
+	 * @param orange
+	 *            Output pin for orange motor control line.
+	 * @param in
+	 *            Input pin for limit switch.
+	 * @param gpio
+	 *            GPIO controller (only one per application)
+	 * @param range
+	 *            Maximum/Minimum for this motor.
+	 * @param centerForwards
+	 *            Defines if motor moves forwards or backwards during centering
+	 *            process.
+	 */
 	public MotorThread(Pin blue, Pin pink, Pin yellow, Pin orange, Pin in, GpioController gpio, double range,
 			boolean centerForwards) {
 		this.input = new PinInputController(in, gpio);
@@ -74,11 +138,12 @@ public class MotorThread extends StatusThread {
 
 	@Override
 	protected void setup() {
-		center();
+		center(); //center at startup to ensure that all angles are correct
 	}
 
 	@Override
 	protected void task() {
+		//move only if target angle is not reached already
 		if (Math.abs(currentAngle - targetAngle) > STEP_ANGLE_RATIO) {
 			if (currentAngle - targetAngle < 0) {
 				forwards();
@@ -88,9 +153,15 @@ public class MotorThread extends StatusThread {
 		}
 	}
 
+	/**
+	 * Moves to minimum first with {@link #findStart() findStart}-method and
+	 * then moves backwards until center postion is reached.
+	 */
 	public void center() {
+		//move to minimum
 		findStart();
 
+		//move back to center
 		for (int i = 0; i < maxAngle / STEP_ANGLE_RATIO; i++) {
 			move(!centerForwards);
 		}
@@ -98,6 +169,13 @@ public class MotorThread extends StatusThread {
 		targetAngle = 0;
 	}
 
+	/**
+	 * Moves motor with {@link #forwards() forwards}- and {@link #backwards() backwards}-methods.
+	 * 
+	 * @param direction
+	 *            If true the motor moves forwards. Otherwise it moves
+	 *            backwards.
+	 */
 	private void move(boolean direction) {
 		if (direction) {
 			forwards();
@@ -106,6 +184,10 @@ public class MotorThread extends StatusThread {
 		}
 	}
 
+	/**
+	 * Used to find the minimum or maximum position of the motor. To find this
+	 * border the moter moves till the limit switch is triggered.
+	 */
 	private void findStart() {
 		if (centerForwards) {
 			currentAngle = minAngle;
@@ -113,10 +195,12 @@ public class MotorThread extends StatusThread {
 			currentAngle = maxAngle;
 		}
 
+		//move to maximum/minimum
 		while (input.isHigh()) {
 			move(centerForwards);
 		}
 
+		//reset angle to correct value
 		if (centerForwards) {
 			currentAngle = maxAngle;
 		} else {
@@ -134,6 +218,13 @@ public class MotorThread extends StatusThread {
 		System.out.println("DONE");
 	}
 
+	/**
+	 * Sets the GPIO pins to the states defined by the parameters. 
+	 * @param b
+	 * @param p
+	 * @param y
+	 * @param o
+	 */
 	void setStep(boolean b, boolean p, boolean y, boolean o) {
 		blue.setState(b);
 		pink.setState(p);
@@ -141,17 +232,27 @@ public class MotorThread extends StatusThread {
 		orange.setState(o);
 	}
 
+	/**
+	 * Moves the motor one step forwards. 
+	 */
 	public void forwards() {
+		//check if still inside border.
 		if (currentAngle > maxAngle) {
 			return;
 		}
+		//get and set the next step
 		boolean[] tmp = fullstep[currentStep];
 		setStep(tmp[0], tmp[1], tmp[2], tmp[3]);
 		pause(delay);
+		//update the current angle and step
 		currentStep = (currentStep + 1) % fullstep.length;
 		currentAngle += STEP_ANGLE_RATIO;
 	}
 
+	/**
+	 * Moves the motor one step backwards
+	 * @see #forwards()
+	 */
 	public void backwards() {
 		if (currentAngle < minAngle) {
 			return;

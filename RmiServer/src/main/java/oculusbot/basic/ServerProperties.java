@@ -1,5 +1,10 @@
 package oculusbot.basic;
 
+/**
+ * Contains names to access all properties in the server config file. 
+ * @author Robert Meschkat
+ *
+ */
 public interface ServerProperties {
 	String PROPERTY_FILENAME = "./server.cfg";
 	String DEFAULT_PROPERTY_FILENAME = "config/default_server.cfg";

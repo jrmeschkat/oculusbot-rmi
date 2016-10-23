@@ -7,6 +7,13 @@ import com.pi4j.io.gpio.PinState;
 
 import oculusbot.basic.StatusThread;
 
+/**
+ * Old class used for testing basic motor functionality of the RaspberryPi. Not
+ * used in Oculusbot-project.
+ * 
+ * @author Robert Meschkat
+ *
+ */
 public class SimpleMotorThread extends StatusThread {
 	private static final long DELAY = 2;
 	private static final int TYPE = 2;
@@ -16,6 +23,7 @@ public class SimpleMotorThread extends StatusThread {
 	private GpioPinDigitalOutput yellow;
 	private GpioPinDigitalOutput orange;
 	private boolean forward = true;
+	private boolean pause = false;
 
 	private int[][] waveForward = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
 	private int[][] waveBackwards = { { 0, 0, 0, 1 }, { 0, 0, 1, 0 }, { 0, 1, 0, 0 }, { 1, 0, 0, 0 } };
@@ -33,11 +41,14 @@ public class SimpleMotorThread extends StatusThread {
 		this.orange = gpio.provisionDigitalOutputPin(orange);
 	}
 
-
 	public void toggle() {
 		forward = !forward;
 	}
-	
+
+	public void pause() {
+		pause = !pause;
+	}
+
 	void setStep(boolean b, boolean p, boolean y, boolean o) {
 		blue.setState(b);
 		pink.setState(p);
@@ -96,29 +107,25 @@ public class SimpleMotorThread extends StatusThread {
 
 		for (int i = 0; i < bool.length; i++) {
 			setStep(bool[i][0], bool[i][1], bool[i][2], bool[i][3]);
-			try {
-				sleep(DELAY);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			pause(DELAY);
 		}
 	}
 
 	@Override
 	protected void setup() {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void task() {
-		if (forward) {
-			forward(1);
-		} else{
-			backwards(1);
+		if (!pause) {
+			if (forward) {
+				forward(1);
+			} else {
+				backwards(1);
+			}
 		}
 	}
-
 
 	@Override
 	protected void shutdown() {

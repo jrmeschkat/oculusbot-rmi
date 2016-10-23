@@ -13,6 +13,14 @@ import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
 
+/**
+ * Class to create an OpenGL- and GLFW-based window. Has a list for
+ * {@link oculusbot.opengl.Renderable Renderable}-implementations which will be
+ * rendered to this window.
+ * 
+ * @author Robert Meschkat
+ *
+ */
 public class Window {
 	public static final int DEFAULT_WIDTH = 800;
 	public static final int DEFAULT_HEIGHT = 600;
@@ -32,39 +40,76 @@ public class Window {
 
 	private LinkedList<Renderable> renderObjects = new LinkedList<Renderable>();
 
+	/**
+	 * Sets window width.
+	 * @param width
+	 */
 	public void setWidth(int width) {
 		this.width = width;
 	}
 
+	/**
+	 * Returns window width.
+	 * @return
+	 */
 	public int getWidth() {
 		return width;
 	}
 
+	/**
+	 * Set window height.
+	 * @param height
+	 */
 	public void setHeight(int height) {
 		this.height = height;
 	}
 
+	/**
+	 * Get window height.
+	 * @return
+	 */
 	public int getHeight() {
 		return height;
 	}
-	
-	public void setCallback(Callback callback){
+
+	/**
+	 * Set a {@link oculusbot.opengl.Callback Callback}-implementation.
+	 * @param callback
+	 */
+	public void setCallback(Callback callback) {
 		this.callback = callback;
 	}
 
+	/**
+	 * Create a window and set a {@link oculusbot.opengl.Callback Callback}-implementation.
+	 * @param callback
+	 */
 	public Window(Callback callback) {
 		this.callback = callback;
 	}
 
+	/**
+	 * Create a window without a callback.
+	 */
 	public Window() {
 		this(null);
 	}
 
+	/**
+	 * Create a window without a callback
+	 * @param width Window width.
+	 * @param height Window height.
+	 */
 	public Window(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
 
+	/**
+	 * Initialize the window and all registered Renderables.
+	 * @throws IllegalStateException
+	 * @throws RuntimeException
+	 */
 	public void init() throws IllegalStateException, RuntimeException {
 		//set the error callback to System.err to allow OpenGL to print error messages
 		glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -93,9 +138,9 @@ public class Window {
 				resized = true;
 			}
 		});
-		
+
 		keyCallback = GLFWKeyCallback.create(new GLFWKeyCallbackI() {
-			
+
 			public void invoke(long window, int key, int scancode, int action, int mods) {
 				if (action == GLFW_RELEASE) {
 					if (key == GLFW_KEY_ESCAPE) {
@@ -107,7 +152,7 @@ public class Window {
 							callback.keyPressed(window, key, scancode, action, mods);
 						}
 					}
-				}				
+				}
 			}
 		});
 
@@ -138,6 +183,7 @@ public class Window {
 	 */
 	public void render() throws IllegalStateException {
 
+		//check if window should close
 		if (glfwWindowShouldClose(window) == true) {
 			shouldClose = true;
 			return;
@@ -145,11 +191,13 @@ public class Window {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		//check if window should be resized
 		if (resized) {
 			glViewport(0, 0, width, height);
 			resized = false;
 		}
 
+		//render all registered Renderables.
 		for (Renderable r : renderObjects) {
 			r.render();
 		}
@@ -159,6 +207,9 @@ public class Window {
 
 	}
 
+	/**
+	 * Destroys all registered Renderables and closes the window.
+	 */
 	public void destroy() {
 		for (Renderable r : renderObjects) {
 			r.destroy();
@@ -190,7 +241,6 @@ public class Window {
 		}
 	}
 
-	//TODO add method to unregister objects
 	/**
 	 * <b>Must be called before start() at the moment.</b>
 	 * 
