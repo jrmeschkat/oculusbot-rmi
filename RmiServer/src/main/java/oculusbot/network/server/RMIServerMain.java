@@ -12,6 +12,10 @@ import oculusbot.config.CameraConfig;
  *
  */
 
+import oculusbot.config.CameraConfig;
+
+import oculusbot.config.CameraConfig;
+
 public class RMIServerMain {
 
 	public static void main(String[] args) throws IOException {

@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
 
+import java.util.Properties;
 /**
  * Helper class for simple access to a property file
  * @author Robert Meschkat
@@ -28,13 +28,12 @@ public class PropertyLoader {
 		this.defaultPropertyFile = defaultPropertyFile;
 		props = loadProperties();
 	}
-	
-	
+
 	/**
 	 * Tries to load normal file first. If unsuccessful tries to load default file.  
 	 * @return The properties object with the loaded information or an empty object if neither file was found.
 	 */
-	private Properties loadProperties(){
+	public Properties loadProperties() {
 		Properties result = new Properties();
 		InputStream in = null;
 		try {
@@ -56,32 +55,32 @@ public class PropertyLoader {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Looks up property and converts the value to an integer before returning it.
 	 * @param key Key to find the correct property.
 	 * @return Property value as integer.
 	 */
-	public int getPropertyAsInt(String key){
-		try{
+	public int getPropertyAsInt(String key) {
+		try {
 			int result = Integer.parseInt(props.getProperty(key));
 			return result;
-		} catch(NumberFormatException e){
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * Returns needed property value.
 	 * @param key Key to find the correct property.
 	 * @return Property value.
 	 */
-	public String getProperty(String key){
+	public String getProperty(String key) {
 		return props.getProperty(key);
 	}
-	
+
 	public void updateValue(String key, String value) {
 		OutputStream out = null;
 		try {
