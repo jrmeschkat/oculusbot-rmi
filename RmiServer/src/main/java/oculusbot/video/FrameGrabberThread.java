@@ -16,7 +16,8 @@ public class FrameGrabberThread extends StatusThread {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 
-	private static final int QUALITY = 25;
+	private static final int MAX_DATA_SIZE = 65000;
+	private static final int QUALITY = 18;
 	private MatOfByte buffer;
 	private VideoCaptureThread leftThread;
 	private VideoCaptureThread rightThread;
@@ -25,6 +26,11 @@ public class FrameGrabberThread extends StatusThread {
 	private int camHeight;
 	private int camIdLeft;
 	private int camIdRight;
+	/**
+	 * Border used to prevent texture filtering and chromatic aberration.
+	 * @see org.lwjgl.ovr.OVR#ovr_GetFovTextureSize(long, int, org.lwjgl.ovr.OVRFovPort, float, org.lwjgl.ovr.OVRSizei) ovr_GetFovTextureSize
+	 */
+	private Mat border = null;
 
 	public FrameGrabberThread() {
 		this(0, 0, 0, 1);
@@ -48,7 +54,14 @@ public class FrameGrabberThread extends StatusThread {
 
 	public byte[] grabFrameAsByte() {
 		try {
-			return buffer.toArray();
+			byte[] data = buffer.toArray();
+			if(data.length > MAX_DATA_SIZE){
+				data = new byte[MAX_DATA_SIZE];
+				System.arraycopy(buffer.toArray(), 0, data, 0, data.length);
+				msg("WARNING: Image to big. Data will be lost.");
+			}
+			
+			return data;
 		} catch (RuntimeException e) {
 			return null;
 		}
@@ -81,10 +94,16 @@ public class FrameGrabberThread extends StatusThread {
 			right = leftThread.getFrame();
 			left = rightThread.getFrame();
 		}
+
 		if (left == null || left.empty() || right == null || right.empty()) {
 			return;
 		}
 
+		if(border == null){
+			int rows = Math.max(left.rows(), right.rows());
+			border = new Mat(rows, 8, left.type());
+		}
+		
 		Core.hconcat(Arrays.asList(new Mat[] { left, right }), m);
 		MatOfByte buf = new MatOfByte();
 		MatOfInt params = new MatOfInt(Imgcodecs.CV_IMWRITE_JPEG_QUALITY, QUALITY);

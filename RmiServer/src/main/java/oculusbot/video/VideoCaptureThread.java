@@ -35,10 +35,10 @@ public class VideoCaptureThread extends StatusThread {
 		this.camId = camId;
 		this.camWidth = camWidth;
 		this.camHeight = camHeight;
+		camSetup();
 	}
-
-	@Override
-	protected void setup() {
+	
+	private void camSetup(){
 		cam = new VideoCapture();
 		cam.open(camId);
 		cam.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, camWidth);
@@ -47,6 +47,10 @@ public class VideoCaptureThread extends StatusThread {
 		if (!cam.isOpened()) {
 			throw new IllegalStateException("Couldn't open cam: " + camId);
 		}
+	}
+
+	@Override
+	protected void setup() {
 	}
 
 	@Override

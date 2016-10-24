@@ -32,11 +32,6 @@ public abstract class StatusThread extends Thread {
 	protected abstract void shutdown();
 
 	@Override
-	public synchronized void start() {
-		super.start();
-	}
-
-	@Override
 	public void run() {
 		//run setup
 		setName(getClass().getName());
