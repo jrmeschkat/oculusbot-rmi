@@ -13,10 +13,15 @@ import oculusbot.basic.StatusThread;
 import oculusbot.rmi.PiOperations;
 import oculusbot.video.SendVideoThread;
 
+/**
+ * Class that handles communication between the different parts of the program.
+ * 
+ * @author Robert Meschkat
+ *
+ */
 public class Controller extends StatusThread {
 	private CommunicationsThread com;
 	private SendVideoThread video;
-	//	private StatusLED led;
 	private PropertyLoader props;
 	private SSHExecuter exec;
 	private String hostname;
@@ -25,31 +30,41 @@ public class Controller extends StatusThread {
 	@Override
 	protected void setup() {
 		ignoreStatus = true;
+		//load the property file
 		props = new PropertyLoader(PROPERTY_FILENAME, DEFAULT_PROPERTY_FILENAME);
+
+		//use SSH to run a script on the RaspberryPi which starts the component that controls the motors 
 		hostname = props.getProperty(PI_HOSTNAME);
 		exec = new SSHExecuter(props.getProperty(PI_USER), props.getProperty(PI_PASSWORD), hostname);
 		msg(exec.sendCommand("sudo RMIPiServer/run.sh"));
 
+		//bind the method handler to the objects in the RMI-registry that was create by the Pi-component
 		ops = bind(hostname, PiOperations.REGISTRY_NAME);
-		try {
-			System.out.println(ops.test("HELLO WORLD!"));
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
+		//create the communications thread
 		com = new CommunicationsThread(props.getPropertyAsInt(PORT_DISCOVERY), this);
+		//load some properties for the video thread
 		int camWidth = props.getPropertyAsInt(CAM_WIDTH);
 		int camHeight = props.getPropertyAsInt(CAM_HEIGHT);
 		int camIdLeft = props.getPropertyAsInt(CAM_ID_LEFT);
 		int camIdRight = props.getPropertyAsInt(CAM_ID_RIGHT);
 		msg("Cam resolution: " + camWidth + " x " + camHeight);
+		//start the video and communications thread
 		video = new SendVideoThread(props.getPropertyAsInt(PORT_VIDEO), camWidth, camHeight, camIdLeft, camIdRight);
 		com.start();
 		video.start();
 
-		//		led = new StatusLED(Pins.GPIO_05, gpio);
 	}
 
+	/**
+	 * Tries to bind the RMI-handle to the registry. Retries if no connection
+	 * was established.
+	 * 
+	 * @param hostname
+	 *            Name of the host of the RMI-registry.
+	 * @param objectname
+	 *            Name of the object that should be bound to the handle.
+	 * @return
+	 */
 	private PiOperations bind(String hostname, String objectname) {
 		PiOperations ops;
 		while (true) {
@@ -71,7 +86,6 @@ public class Controller extends StatusThread {
 
 	@Override
 	protected void task() {
-		//		led.setStatus(passthroughStatus(com, bot, video));
 		pause(100);
 	}
 
@@ -79,7 +93,6 @@ public class Controller extends StatusThread {
 	protected void shutdown() {
 		com.interrupt();
 		video.interrupt();
-		//		led.shutdown();
 
 		waitForClosingThreads(com, video);
 		try {
@@ -90,20 +103,44 @@ public class Controller extends StatusThread {
 		exec.disconnect();
 	}
 
+	/**
+	 * Tells the video thread to add a client to the receiver list.
+	 * 
+	 * @param ip
+	 *            IP of the client
+	 */
 	public void registerClient(String ip) {
 		video.registerClient(ip);
 	}
 
-	public void deregisterClient(String ip) {
-		video.deregisterClient(ip);
+	/**
+	 * Tells the video thread to remove a client from the receiver list.
+	 * 
+	 * @param ip
+	 *            IP of the client
+	 */
+	public void unregisterClient(String ip) {
+		video.unregisterClient(ip);
 	}
 
+	/**
+	 * Handles the received keyboard input of the client.
+	 * 
+	 * @param key
+	 *            Key that determines the operation
+	 */
 	public void keyReleased(int key) {
 		if (key == GLFW.GLFW_KEY_S) {
 			video.switchCameras();
 		}
 	}
 
+	/**
+	 * Tells the RaspberryPi-component to update the target motor position.
+	 * 
+	 * @param data
+	 *            New position data.
+	 */
 	public void setPosition(double[] data) {
 		try {
 			if (data != null && data.length > 2)

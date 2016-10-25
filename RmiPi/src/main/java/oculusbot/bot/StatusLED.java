@@ -7,6 +7,11 @@ import com.pi4j.io.gpio.PinState;
 
 import oculusbot.basic.Status;
 
+/**
+ * Controls a LED on the circuit board depending on the current status. Not used at the moment.
+ * @author Robert Meschkat
+ *
+ */
 public class StatusLED {
 	private static final long BLINK_FAST = 200;
 	private static final long BLINK_SLOW = 500;

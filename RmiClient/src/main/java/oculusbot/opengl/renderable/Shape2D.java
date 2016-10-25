@@ -10,6 +10,11 @@ import org.lwjgl.BufferUtils;
 import oculusbot.opengl.Renderable;
 import oculusbot.opengl.ShaderUtils;
 
+/**
+ * Used for testing rendering with OpenGL and the Rift. Not used anymore.
+ * @author Robert Meschkat
+ *
+ */
 public class Shape2D implements Renderable{
 	private static final int FLOAT_SIZE = 4;
 	private int program;
@@ -58,7 +63,6 @@ public class Shape2D implements Renderable{
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
 		
 	}
 

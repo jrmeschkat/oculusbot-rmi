@@ -78,11 +78,11 @@ public class CommunicationsThread extends NetworkThread {
 		}
 
 		//clients wants to unregister itself
-		if (msg.equals(OB_DEREGISTER_CLIENT)) {
+		if (msg.equals(OB_UNREGISTER_CLIENT)) {
 			msg("Packet received from " + packet.getAddress().getHostAddress() + ": " + msg);
 			msg("Deregistered client " + packet.getAddress().getHostAddress());
 			//remove clients IP
-			controller.deregisterClient(packet.getAddress().getHostAddress());
+			controller.unregisterClient(packet.getAddress().getHostAddress());
 			send(OB_ACK, packet);
 		}
 

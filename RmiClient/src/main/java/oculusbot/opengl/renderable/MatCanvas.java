@@ -30,8 +30,14 @@ import org.lwjgl.BufferUtils;
 import oculusbot.opengl.Renderable;
 import oculusbot.opengl.ShaderUtils;
 import oculusbot.opengl.texture.MatTexture;
+import oculusbot.video.Frame;
 import oculusbot.video.ReceiveVideoThread;
 
+/**
+ * Class that creates a rectangle in OpenGL and renders a {@link oculusbot.opengl.texture.MatTexture MatTexture} to it.
+ * @author Robert Meschkat
+ *
+ */
 public class MatCanvas implements Renderable {
 	private static final String VERTEX_NAME = "shaders/texture.vert";
 	private static final String FRAGMENT_NAME = "shaders/texture.frag";
@@ -40,6 +46,11 @@ public class MatCanvas implements Renderable {
 	private int texture;
 	private float[] cords;
 	private MatTexture matTexture;
+	private Frame frame;
+	
+	public Frame getFrame(){
+		return frame;
+	}
 
 	public MatCanvas(ReceiveVideoThread video) {
 		matTexture = new MatTexture(video);
@@ -54,7 +65,7 @@ public class MatCanvas implements Renderable {
 			e.printStackTrace();
 		}
 
-		//create shape data
+		//create shape data (a rectangle used as a canvas)
 		cords = new float[] { 1f, -1f, 1, 1, -1f, -1f, 0, 1, 1f, 1f, 1, 0, -1f, 1f, 0, 0 };
 		FloatBuffer shape = BufferUtils.createFloatBuffer(cords.length);
 		shape.put(cords).flip();
@@ -67,30 +78,35 @@ public class MatCanvas implements Renderable {
 	}
 
 	public void render() {
+		frame = matTexture.getFrame();
+		//get the texture
 		texture = matTexture.grabTexture();
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		glUseProgram(program);
 
+		//load the texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		int textureSampler = glGetUniformLocation(program, "textureSampler");
 		glUniform1i(textureSampler, 0);
 
+		//get position from buffer
 		int position = glGetAttribLocation(program, "position");
 		glEnableVertexAttribArray(position);
 		glVertexAttribPointer(position, 2, GL_FLOAT, false, cords.length, 0);
 
+		//get UV from buffer
 		int vertexUV = glGetAttribLocation(program, "vertexUV");
 		glEnableVertexAttribArray(vertexUV);
 		glVertexAttribPointer(vertexUV, 2, GL_FLOAT, false, cords.length, 8);
 
+		//draw canvas with texture
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glDisableVertexAttribArray(0);
 	}
 
 	public void destroy() {
-		// TODO Auto-generated method stub
 
 	}
 
