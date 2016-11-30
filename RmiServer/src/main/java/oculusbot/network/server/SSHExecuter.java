@@ -61,19 +61,10 @@ public class SSHExecuter {
 			ChannelExec channel = (ChannelExec) session.openChannel("exec");
 			channel.setCommand(command);
 			channel.connect();
-			//read the result
-			InputStream in = channel.getInputStream();
-			int read = in.read();
-			while (read != -1) {
-				buffer.append((char) read);
-				read = in.read();
-			}
 			channel.disconnect();
 		} catch (JSchException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
 
 		return buffer.toString();
 	}
